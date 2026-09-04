@@ -1,0 +1,18 @@
+{
+  "states": [
+    "idle",
+    "running",
+    "streaming",
+    "waiting",
+    "completed",
+    "error"
+  ],
+  "transitions": {
+    "idle": ["running", "error"],
+    "running": ["streaming", "waiting", "completed", "error"],
+    "streaming": ["completed", "error"],
+    "waiting": ["running", "error"],
+    "completed": ["idle", "running"],
+    "error": ["idle", "running"]
+  }
+}

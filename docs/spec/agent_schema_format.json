@@ -1,0 +1,31 @@
+{
+  "agentId": "string",
+  "name": "string",
+  "description": "string",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "fieldName": {
+        "type": "string | number | boolean | object | array",
+        "title": "string",
+        "description": "string",
+        "default": "any",
+        "enum": ["optional"]
+      }
+    },
+    "required": ["fieldName"]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {}
+  },
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "temperature": {
+        "type": "number",
+        "default": 0.7
+      }
+    }
+  }
+}

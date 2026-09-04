@@ -1,0 +1,61 @@
+
+{
+  "session.created": {
+    "sessionId": "string",
+    "type": "session.created",
+    "state": "idle",
+    "timestamp": "number"
+  },
+  "session.started": {
+    "sessionId": "string",
+    "type": "session.started",
+    "state": "running",
+    "input": {},
+    "config": {},
+    "timestamp": "number"
+  },
+  "session.stateChanged": {
+    "sessionId": "string",
+    "type": "session.stateChanged",
+    "from": "string",
+    "to": "string",
+    "timestamp": "number"
+  },
+  "output.partial": {
+    "sessionId": "string",
+    "type": "output.partial",
+    "chunk": {},
+    "timestamp": "number"
+  },
+  "output.final": {
+    "sessionId": "string",
+    "type": "output.final",
+    "output": {},
+    "timestamp": "number"
+  },
+  "log.append": {
+    "sessionId": "string",
+    "type": "log.append",
+    "severity": "info | warn | error",
+    "message": "string",
+    "timestamp": "number"
+  },
+  "session.error": {
+    "sessionId": "string",
+    "type": "session.error",
+    "error": {
+      "message": "string",
+      "stack": "string",
+      "code": "string"
+    },
+    "timestamp": "number"
+  },
+  "session.completed": {
+    "sessionId": "string",
+    "type": "session.completed",
+    "state": "completed",
+    "durationMs": "number",
+    "tokensUsed": "number",
+    "timestamp": "number"
+  }
+}
