@@ -3,7 +3,41 @@
 An event-driven, browser-style dashboard for running, observing, and controlling **AI agents**. Each browser tab represents exactly **one agent session**, streaming logs, partial/final output, and lifecycle state in real time — architected so the same session components can later be reused inside a multi-agent workflow builder.
 
 > **Status: 📐 Product definition complete — implementation not started.**
-> This repository currently contains the complete, reconciled specification in [`docs/`](docs/). Code arrives with **Phase 0** of the [implementation plan](docs/analysis/implementation_plan.md). All product decisions (**D1–D16**) are confirmed — see [`docs/analysis/scope_decisions.md`](docs/analysis/scope_decisions.md).
+> This repository currently contains the complete, reconciled specification in [`docs/`](docs/). Code arrives with **Phase 0** of the [implementation plan](docs/analysis/implementation_plan.md). All product decisions (**D1–D16**) are confirmed — see [`docs/analysis/scope_decisions.md`](docs/analysis/scope_decisions.md). Progress is tracked in the [implementation tracker](#implementation-tracker) below.
+
+---
+
+## Implementation tracker
+
+> **Living checklist** — update the Status column as work progresses (flip a part to ✅ only when its *Done when* verification passes).
+> Legend: ⬜ not started · 🔄 in progress · ✅ done (verification passed) · ⏸️ blocked/paused
+> **Progress: 0 / 21 parts** · Last updated: 2026-09-05 · Full deliverables & commands: [`docs/analysis/implementation_plan.md`](docs/analysis/implementation_plan.md)
+
+| Phase | Part | Deliverable | Done when | Status |
+|---|---|---|---|---|
+| **P0 — Foundation** (sequential) | 0.1 | Monorepo scaffold: npm workspaces, tsconfig.base, editorconfig/gitignore | `npm install` clean; `npm run typecheck` exits 0 | ⬜ |
+| | 0.2 | Infra: docker-compose (Redis; Mongo commented), `.env.example`, env defaults module | `docker compose up -d redis` healthy; `redis-cli ping` → `PONG` | ⬜ |
+| | 0.3 | Root scripts (dev/build/test/lint/typecheck/smoke) + GitHub Actions CI | CI green on skeleton PR; `npm run test` exits 0 | ⬜ |
+| **P1 — Contracts** (after P0) | 1.1 | Canonical types + validators: events, session states + transition table, entities | `npm test -w @agent/contracts` green; `npm run typecheck` clean | ⬜ |
+| | 1.2 | Agent-schema package: format, ajv validator, registry, seed schema files (echo, calculator) | `npm test -w @agent/agent-schemas` green; seed files compile | ⬜ |
+| **P2 — Gateway** (∥ P3/P4) | 2.1 | Fastify skeleton: config, CORS, pino, `GET /health` | Supertest /health (Redis up/down); `curl :3001/health` | ⬜ |
+| | 2.2 | Sessions REST core: in-memory store (TTL), create/run/stop/approve routes | Supertest contract shapes; 404s; `task.created` carries `sessionId` | ⬜ |
+| | 2.3 | Redis bridge + fan-out + SSE stream | Real-Redis test: publish → SSE frame; no subscriber leaks on disconnect | ⬜ |
+| | 2.4 | Agent list & schema routes + seeding | `GET /agents/list` ≥ 2 agents; schema round-trip; 404 unknown | ⬜ |
+| **P3 — Harness** (∥ P2/P4) | 3.1 | Harness skeleton: Redis worker, sub/pub, canonical emit helpers | `task.created` → events on `agent.logs` + session channel with `sessionId` | ⬜ |
+| | 3.2 | Contract-compliant runtime + seed agents (echo, calculator) | Ordered event sequences; abort → `CANCELLED`; `INVALID_INPUT`; run < 2 s | ⬜ |
+| | 3.3 | HITL pause/resume (D11) | `approval.requested` + `waiting`; approve → resume → completed | ⬜ |
+| **P4 — Frontend** (∥ P2/P3) | 4.1 | Vite shell + wireframe layout regions | RTL smoke; `npm run build -w @agent/frontend` | ⬜ |
+| | 4.2 | State layer: RxJS event bus + per-session streams | Marble tests: routing, replay ≤ 100, unsubscribe cleanup | ⬜ |
+| | 4.3 | API client + SSE glue + dev mock transport | fetch/EventSource mocks; parse → `routeEvent` | ⬜ |
+| | 4.4 | Session workspace components (header, form, output, logs, controls, indicator, approvals) | RTL scripted session; state icons; schema-driven form; approve fires | ⬜ |
+| | 4.5 | Tab bar & sidebar (tabs ∥ sessions) | Open/switch/close: SSE connect, resubscribe, unsubscribe | ⬜ |
+| | 4.6 | Cloning + Rerun/Restart UX (D12) | Clone → fresh idle tab, input preserved; snapshot rejects runtime state | ⬜ |
+| **P5 — Hardening** (after P2+P3+P4) | 5.1 | `scripts/smoke.mjs` + contract-alignment sweep | `npm run smoke` exit 0; run twice, no Redis-sub leaks | ⬜ |
+| | 5.2 | HITL e2e + clone/rerun e2e | Smoke covers approval flow + restart-from-clone | ⬜ |
+| | 5.3 | README quickstart finalized | Fresh-clone walkthrough follows README successfully | ⬜ |
+
+*P6 post-MVP backlog (workflow engine, Mongo wiring, server-side replay, Python harness via uv, auth) is tracked in the [implementation plan](docs/analysis/implementation_plan.md), not in this tracker.*
 
 ---
 
@@ -121,7 +155,7 @@ npm run smoke      # end-to-end: create → run → assert streamed event sequen
 | **P0** | Monorepo scaffold, compose + env, scripts, CI | sequential |
 | **P1** | `contracts` + `agent-schemas` packages | sequential |
 | **P2 / P3 / P4** | Gateway ∥ Agent Harness + seed agents ∥ Frontend | **parallel tracks** |
-| **P5** | End-to-end smoke, HITL e2e, README | sequential |
+| **P5** | End-to-end smoke, HITL e2e, README quickstart finalized | sequential |
 | **P6** | Post-MVP: workflow engine, Mongo wiring, server-side replay, Python harness (uv), auth | backlog |
 
 Details, per-part deliverables and verification commands: [`docs/analysis/implementation_plan.md`](docs/analysis/implementation_plan.md).
