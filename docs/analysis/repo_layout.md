@@ -1,7 +1,7 @@
 # Proposed Repository Layout (Actor-based, npm workspaces)
 
 > Companion: [`project_analysis.md`](./project_analysis.md), [`scope_decisions.md`](./scope_decisions.md) (D15), [`implementation_plan.md`](./implementation_plan.md) (Phase 0 creates this).
-> Status: recommended snapshot for Day‑1 scaffolding. Derived from `docs/scaffolds/*` + `docs/spec/*`, reconciling the conflicts (G1–G12) per scope decisions.
+> Status: ✅ **confirmed target layout** (2026-09-05, D15 — npm workspaces; uv reserved for a future Python harness). Originally drafted as a snapshot for Day‑1 scaffolding. Derived from `docs/scaffolds/*` + `docs/spec/*`, reconciling the conflicts (G1–G12) per scope decisions.
 
 ---
 
@@ -150,4 +150,4 @@ Redis `:6379`, Mongo (optional) `:27017` — provisioned by `infra/docker-compos
 - **Names** come only from `packages/contracts` — no literal state/event/endpoint strings sprinkled in apps (G1–G5 prevention).
 - **Comments** reference decision IDs (`// D6: canonical event`) so doc↔code stays traceable.
 - **Post-MVP placeholders** live as stubs (`WorkflowCanvasPlaceholder.tsx`, empty snapshot hooks) — visible but inert (D10).
-- **Superseded docs** (`spec/backend_api_contract.md`, `scaffolds/Backend_Scaffold.md`, field-list loader sections) get a banner: "Superseded — see Gateway_Scaffold / scope_decisions D3/D7/D8" (P0.3 doc pass).
+- **Superseded docs** (`spec/backend_api_contract.md`, `scaffolds/Backend_Scaffold.md`, `scaffolds/Agent_Schema_Loader.md`) — banners **applied 2026-09-05** (done ahead of Phase 0.3).

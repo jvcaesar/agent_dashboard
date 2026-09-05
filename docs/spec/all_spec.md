@@ -1,3 +1,5 @@
+> ⚠️ **GENERATED EXPORT (pre-decision snapshot, 2026-09-05)** — This file concatenates the spec docs and **includes superseded content without banners** (notably the sessions-monolith `backend_api_contract`). The **individual files in `docs/spec/` are authoritative** — several now carry decision banners/notes (D2–D8, D11). Prefer them, or `packages/contracts` once it exists.
+
 This is meant for **direct implementation** by an IDE agent or LLM — meaning:
 
 - JSON schemas  

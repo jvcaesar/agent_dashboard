@@ -2,6 +2,8 @@
 
 *Gateway Scaffold (Event-Driven, Redis-Backed, Polyglot)*
 
+> **Scope note (2026-09-05, decisions D4/D7):** This scaffold's architecture (Fastify + Redis + SSE) is current, but its **`/tasks` and `/approvals` HTTP routes are superseded** — the MVP exposes a sessions-centric API only: `POST /sessions/create`, `/run`, `/stop`, `/approve`, plus `GET /sessions/:id/events` (SSE) and `/agents/list`, `/agents/:agentId/schema`. Tasks are internal (created 1:1 with a session run); the `/routes/tasks.ts` and `/routes/approvals.ts` sections below are kept for reference only. `sessionId` is first-class on every event.
+
 ## Overview
 
 This document provides a complete **Gateway scaffold** for your event-driven, Redis-backed, polyglot architecture. The Gateway acts as the central orchestrator between:
@@ -42,17 +44,16 @@ It supports human-in-the-loop workflows, task/state management, and normalized e
 ```ts
 import Fastify from "fastify";
 import cors from "@fastify/cors";
-import tasksRouter from "./routes/tasks";
 import sessionsRouter from "./routes/sessions";
-import approvalsRouter from "./routes/approvals";
+// D7: no /tasks or /approvals routes in the MVP — tasks are internal (created
+// 1:1 with a session run); approvals live at POST /sessions/:id/approve.
+// The /routes/tasks.ts and /routes/approvals.ts sections below are superseded.
 import { initRedisSubscriber } from "./redis/sub";
 
 const app = Fastify({ logger: true });
 
 app.register(cors, { origin: "*" });
-app.register(tasksRouter, { prefix: "/tasks" });
 app.register(sessionsRouter, { prefix: "/sessions" });
-app.register(approvalsRouter, { prefix: "/approvals" });
 
 initRedisSubscriber(app);
 

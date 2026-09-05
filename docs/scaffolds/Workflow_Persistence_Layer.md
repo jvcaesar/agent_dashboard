@@ -94,7 +94,7 @@ const WorkflowExecutionSchema = new Schema(
     executionId: { type: String, required: true },
     state: {
       type: String,
-      enum: ["idle", "running", "waiting", "paused", "completed", "failed"],
+      enum: ["idle", "running", "waiting", "paused", "completed", "error"],
       default: "idle"
     },
     currentNodeId: { type: String },
@@ -124,7 +124,7 @@ const WorkflowNodeStateSchema = new Schema(
     nodeId: { type: String, required: true },
     state: {
       type: String,
-      enum: ["pending", "running", "waiting", "completed", "failed"],
+      enum: ["pending", "running", "waiting", "completed", "error"],
       default: "pending"
     },
     lastEvent: Schema.Types.Mixed,

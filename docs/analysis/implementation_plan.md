@@ -1,6 +1,6 @@
 # Implementation Plan — Agent Dashboard MVP
 
-> Companion: [`project_analysis.md`](./project_analysis.md), [`scope_decisions.md`](./scope_decisions.md) (decisions D1–D15), [`repo_layout.md`](./repo_layout.md), plus existing `docs/spec` and `docs/scaffolds` (contracts) — **assuming the scope decisions are accepted before Phase 2 starts**.
+> Companion: [`project_analysis.md`](./project_analysis.md), [`scope_decisions.md`](./scope_decisions.md) (decisions D1–D16), [`repo_layout.md`](./repo_layout.md), plus existing `docs/spec` and `docs/scaffolds` (contracts) — **scope decisions confirmed (2026-09-05): HITL in MVP, in-memory persistence, npm-workspaces tooling (D15), seed agents echo + calculator (D16); no open questions block any phase**.
 
 ---
 
@@ -121,7 +121,7 @@ P0 repository & infra foundation          (sequential, everything depends on it)
 
 **Part 3.2 — Contract-compliant runtime + seed agents**
 - Depends: 3.1 · ∥: with 3.3 prep.
-- Deliverable: `AgentRuntime` interface implementation per `spec/agent_runtime_contract.md` (`streamEvents`, `invoke`, `abort`, `getState`): two concrete agents: **echo** (streams input back in chunks with delays, logs progress, emits usage+final) and **calculator** (parses `expression: string`, streams step logs, final numeric result); abort support; `echo` doubles as the default smoke-test agent; seed schemas already in `packages/agent-schemas` (1.2).
+- Deliverable: `AgentRuntime` interface implementation per `spec/agent_runtime_contract.md` (`streamEvents`, `invoke`, `abort`, `getState`): two concrete agents: **echo** (streams input back in chunks with delays, logs progress, emits usage+final) and **calculator** (parses `expression: string`, streams step logs, final numeric result); abort support; `echo` doubles as the default smoke-test agent; seed schemas already in `packages/agent-schemas` (1.2). Behavior and acceptance criteria per `spec/seed_agents.md` (D16).
 - Verify: unit tests per agent: ordered event sequence (session.started → log/output.partial → output.final → completed) per contract guarantees; abort emits error with `CANCELLED`; invalid input → `INVALID_INPUT` error before execution; integration: complete run finishes under 2 s.
 
 **Part 3.3 — HITL pause/resume (session-level, D11)**
@@ -172,14 +172,14 @@ P0 repository & infra foundation          (sequential, everything depends on it)
 - Deliverable: `scripts/smoke.mjs` (the `smoke` npm script): boots gateway+harness (docker compose up redis); opens SSE client; POST create→run→expect complete event sequence (stateChanged running→streaming→…→completed, logs, partial, final) within timeout; asserts canonical shapes via contracts validators; reports OK/fail exit code. Also: sweep pass reconciling every literal state/endpoint/event name against `packages/contracts` (kills remaining G1–G5 stragglers in code/doc comments).
 - Verify: `npm run smoke` (exit 0; run twice for idempotency (two sessions, no leaks in Redis subs)).
 
-**Part 5.2 — HITL e2e + clone/rerun e2e (if D11/D12 kept)**
+**Part 5.2 — HITL e2e + clone/rerun e2e**
 - Depends: 5.1 · ∥: —.
 - Deliverable: smoke extensions: approval flow (run calculator with approvalRequired → approval.requested → POST approve → completion) and restart-from-clone run.
 - Verify: `npm run smoke` covers both scenarios; manual demo walkthrough against `MVP_Overview.md` acceptance.
 
 **Part 5.3 — README + doc status pass**
 - Depends: 5.1 · ∥: with 5.2.
-- Deliverable: root README (quickstart: compose up, env, 3 processes, smoke); annotate superseded docs (D3 banner); `docs/analysis/` linked from README.
+- Deliverable: root README (quickstart: compose up, env, 3 processes, smoke); `docs/analysis/` linked from README. (Superseded-doc banners: already applied 2026-09-05.)
 - Verify: fresh-clone walkthrough by a teammate follows README successfully (manual).
 
 ---
@@ -190,7 +190,7 @@ Kept out of MVP per D1/D10/D13, **no MVP part may depend on these**:
 - Workflow engine implementation + canvas (interfaces already in contracts; placeholder ships in 4.1).
 - MongoDB persistence wiring (models specced; store interface shaped in 2.2).
 - Server-side session replay buffer / history backfill after reload (D13).
-- Python harness (runtime contract is transport-agnostic; Redis makes it drop-in).
+- Python harness (runtime contract is transport-agnostic; Redis makes it drop-in; uv per D15).
 - Backend snapshot endpoint for cloning (D12 uses client-side snapshots).
 - Auth, rate limiting, TLS, multi-approver HITL, workflow-node approvals, agent marketplace.
 

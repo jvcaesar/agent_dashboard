@@ -90,7 +90,7 @@
 - `idle`: input enabled, logs/output empty, indicator ⚪
 - `running`: input disabled, logs streaming, output visible, indicator 🟢
 - `streaming`: partial output streaming, indicator 🔵
-- `waiting`: waiting banner/spinner, indicator 🟡
+- `waiting`: `AgentApprovalPanel` renders prompt + options (D11); indicator 🟡
 - `completed`: final output, input re-enabled, “Run Again”, indicator 🟣
 - `error`: error banner, logs show error, “Restart Session”, indicator 🔴
 ```

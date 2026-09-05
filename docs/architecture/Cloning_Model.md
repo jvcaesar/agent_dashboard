@@ -52,4 +52,7 @@ const newTab: Tab = {
 - Input + config preserved
 - Logs/output cleared
 - Optional “Clone and Run” vs “Clone Only” (default: “Clone Only”)
+- MVP note (D12): the `SessionSnapshot` is built client-side from the live
+  session's input/config/uiState — no backend snapshot endpoint in the MVP
+  (a server-side snapshot API is post-MVP)
 ```

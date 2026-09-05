@@ -26,4 +26,5 @@ A browser-style agent dashboard where each tab represents an agent session:
   - Logs
   - Partial and final outputs
 - Session cloning and tab duplication
+- Human-in-the-loop approvals: a session can pause in `waiting`, the user picks an option, the agent resumes (D11)
 - Workflow builder preparation (models, hooks, folder structure)

@@ -28,6 +28,9 @@
 - Output panel: streaming + final result
 - Metadata: tokens, duration, cost
 - Controls: Run, Stop, Restart
+- Approval panel: shown while state = `waiting` (D11) — renders the agent's
+  prompt + choice options from `approval.requested`; picking an option fires
+  `POST /sessions/:id/approve` and the session resumes
 
 ## Logs Panel
 

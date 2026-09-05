@@ -1,4 +1,6 @@
 
+> ⚠️ **SUPERSEDED (2026-09-05)** — This contract describes the earlier sessions-monolith backend (Express + WebSocket). The MVP implements the **Gateway + Agent Harness + Redis (SSE)** architecture instead — see `docs/scaffolds/Gateway_Scaffold.md`, `docs/scaffolds/Frontend_SSE_Client_Scaffold.md`, and decisions **D2/D3/D7** in `docs/analysis/scope_decisions.md`. The sessions-centric endpoint set (create/run/stop/approve/events) and the `/agents/*` routes below remain valid in spirit; the canonical contract now lives in `packages/contracts` (`api.ts`).
+
 # 1. **`backend_api_contract.md`**
 
 ```markdown

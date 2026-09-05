@@ -1,5 +1,7 @@
 # Agent Schema Loader
 
+> ⚠️ **Format note (2026-09-05, decision D8)** — The field-list schema format shown in this document (e.g. `input: [{ id, label, type, required, default }]`) is **superseded**. The canonical agent schema format is **JSON Schema (draft-07) for `input`/`config` + `x-ui-*` UI annotations**, per `docs/spec/agent_schema_format.json`. Validation lives in `packages/agent-schemas` (ajv). The loader/registry concepts below remain valid.
+
 ## Overview
 
 This document defines the **Agent Schema Loader** for your event-driven, Redis-backed, polyglot agent system. It provides a unified mechanism for loading, validating, and distributing agent schemas across:

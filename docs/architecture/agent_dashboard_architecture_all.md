@@ -1,6 +1,8 @@
 
 ---
 
+> ⚠️ **GENERATED EXPORT (pre-decision snapshot, 2026-09-05)** — This file concatenates the architecture docs and **includes pre-decision content** (e.g., WebSocket transport options). The **individual files in `docs/architecture/` are authoritative** — several now carry decision notes/banners (D2, D11–D13).
+
 ### `MVP_Overview.md`
 
 ```markdown

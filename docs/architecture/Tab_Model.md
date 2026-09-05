@@ -34,6 +34,7 @@ type Tab = {
   - snapshot input/config/uiState
   - create new session in `idle`
   - bind new tab to new `sessionId`
+  - MVP note (D12): snapshot is built client-side from live session state
 - **Closing**:
   - unsubscribe via `takeUntil`
   - optionally destroy session

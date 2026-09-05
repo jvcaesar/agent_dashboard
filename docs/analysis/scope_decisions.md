@@ -1,14 +1,14 @@
 # Scope & Architecture Decisions (ADR-lite)
 
 > Companion: [`project_analysis.md`](./project_analysis.md) (gaps G1–G12), [`implementation_plan.md`](./implementation_plan.md), [`repo_layout.md`](./repo_layout.md).
-> Purpose: turn every documented inconsistency into an explicit decision so that `docs/` stays authoritative and implementation can start without ambiguity. Decisions marked **[CONFIRM]** need a quick human sign-off before Phase 2 begins; recommended answers are given.
+> Purpose: turn every documented inconsistency into an explicit decision so that `docs/` stays authoritative and implementation can start without ambiguity. **Status: decided & fully confirmed** — the complete register D1–D16 was confirmed with the product owner on 2026-09-05 (see Resolution record); no open questions block implementation.
 
 ---
 
 ## How to use this file
 
 - Each decision: **Decision → Rationale → Impact → Revisit when**.
-- Status values: `settled by docs`, `recommended`, `recommended — [CONFIRM]`.
+- Status values: `settled by docs`, `recommended`, `✅ confirmed` — **the full register (D1–D16) is ✅ confirmed** (product owner, 2026-09-05).
 - If a decision is rejected, edit **only this file** and propagate the change to `packages/contracts` when it exists — do not silently diverge in code.
 
 ---
@@ -17,36 +17,39 @@
 
 | ID | Topic | Decision (short) | Status |
 |---|---|---|---|
-| D1 | MVP boundary | Tabs + sessions + streaming + HITL (session-level); workflow engine/UI last | recommended — [CONFIRM] HITL |
-| D2 | Session transport | SSE (not WebSocket) | settled by docs |
-| D3 | Backend topology | Gateway + Agent Harness + Redis; monolith/WS docs superseded | settled by docs |
-| D4 | Entities | `sessionId` first-class on every event; `taskId` optional correlation | recommended |
-| D5 | Session state set | `idle, running, streaming, waiting, completed, error` everywhere; separate `task.status` enum | recommended |
-| D6 | Canonical events | One event model (`type, sessionId, taskId?, timestamp, payload`); Redis & SSE are encodings of it | recommended |
-| D7 | HTTP/SSE API | Sessions-centric endpoint set on Gateway; no `/tasks` routes in MVP | recommended |
-| D8 | Agent schema format | JSON Schema (draft-07 subset) + UI metadata; single validator in `packages/agent-schemas` | recommended |
-| D9 | Persistence | MVP: in-memory session/task store in Gateway; Mongo optional; required post-MVP | recommended — [CONFIRM] |
-| D10 | Workflow | MVP ships interfaces + models + canvas placeholder only | recommended |
-| D11 | Human-in-the-loop | Session-level approvals in MVP (waiting state, approve endpoint, prompt UI) | recommended — [CONFIRM] |
-| D12 | Run semantics | Run / Rerun vs Restart(clone) pinned | recommended |
-| D13 | Replay & hydration | In-tab `ReplaySubject` suffices; page reload = fresh dashboard | recommended |
-| D14 | Ops & env | `/health`; `.env` + defaults; minimal logs; no auth in MVP | recommended |
-| D15 | Tooling | npm workspaces monorepo; Vite+React+RxJS+Vitest; Fastify+ioredis; compose for Redis (+ Mongo optional) | recommended |
+| D1 | MVP boundary | Tabs + sessions + streaming + HITL (session-level); workflow engine/UI last | ✅ confirmed |
+| D2 | Session transport | SSE (not WebSocket) | ✅ confirmed |
+| D3 | Backend topology | Gateway + Agent Harness + Redis; monolith/WS docs superseded | ✅ confirmed |
+| D4 | Entities | `sessionId` first-class on every event; `taskId` optional correlation | ✅ confirmed |
+| D5 | Session state set | `idle, running, streaming, waiting, completed, error` everywhere; separate `task.status` enum | ✅ confirmed |
+| D6 | Canonical events | One event model (`type, sessionId, taskId?, timestamp, payload`); Redis & SSE are encodings of it | ✅ confirmed |
+| D7 | HTTP/SSE API | Sessions-centric endpoint set on Gateway; no `/tasks` routes in MVP | ✅ confirmed |
+| D8 | Agent schema format | JSON Schema (draft-07 subset) + UI metadata; single validator in `packages/agent-schemas` | ✅ confirmed |
+| D9 | Persistence | MVP: in-memory session/task store in Gateway; Mongo optional; required post-MVP | ✅ confirmed |
+| D10 | Workflow | MVP ships interfaces + models + canvas placeholder only | ✅ confirmed |
+| D11 | Human-in-the-loop | Session-level approvals in MVP (waiting state, approve endpoint, prompt UI) | ✅ confirmed |
+| D12 | Run semantics | Run / Rerun vs Restart(clone) pinned | ✅ confirmed |
+| D13 | Replay & hydration | In-tab `ReplaySubject` suffices; page reload = fresh dashboard | ✅ confirmed |
+| D14 | Ops & env | `/health`; `.env` + defaults; minimal logs; no auth in MVP | ✅ confirmed |
+| D15 | Tooling | npm workspaces monorepo; Vite+React+RxJS+Vitest; Fastify+ioredis; compose for Redis (+ Mongo optional) | ✅ confirmed |
+| D16 | Seed agents | echo + calculator (smoke + HITL demo); no LLM agent in MVP | ✅ confirmed |
 
 <br/>
 
-**Confirmations requested** (deciding these unlocks Phase 2; everything else proceeds in parallel):
-- **D1 / D11** — Keep session-level human-in-the-loop in the MVP, or drop it to start? (Recommended: keep — it is small and the product's differentiator; drop first if time-boxing is urgent.)
-- **D9** — Backend persistence: in-memory (simplest) or wire Mongo from day one? (Recommended: in-memory first; Mongo models ready.)
+**Resolution record** (product owner, 2026-09-05):
+- **D1 / D11 — HITL: confirmed in MVP.** Session-level approvals ship: `waiting` state, `approval.requested/resumed` events, `AgentApprovalPanel`, `POST /sessions/:id/approve`, calculator `approvalRequired` demo.
+- **D9 — Persistence: confirmed in-memory first.** Gateway Map + TTL sweep; Mongo stays specced but unwired (compose service commented); store interface shaped like the Mongo models for a mechanical swap later. Accepted trade-off: gateway restart loses running sessions.
+- **D15 — Tooling: confirmed npm workspaces** for the TypeScript monorepo (no Turborepo/pnpm); uv adopted later for a Python harness per the D15 revisit-trigger.
+- **D16 — Seed agents: confirmed echo + calculator**, specced in `docs/spec/seed_agents.md`; no LLM-backed agent in MVP.
 
-All other "recommended" decisions are reversible without architecture change — that's the point of keeping them explicit.
+All decisions D1–D16 are confirmed (2026-09-05) and remain reversible without architecture change — that's the point of keeping them explicit.
 
 ---
 
 ## Decisions
 
 ### D1 — MVP boundary
-- **Decision**: MVP = single-agent tab sessions with real-time streaming, dynamic schema-driven forms, run/stop/rerun/restart, session cloning, and (recommended) session-level HITL approvals. Workflow builder/engine, orchestration, persistence, Python harness = post-MVP.
+- **Decision**: MVP = single-agent tab sessions with real-time streaming, dynamic schema-driven forms, run/stop/rerun/restart, session cloning, and (confirmed) session-level HITL approvals. Workflow builder/engine, orchestration, persistence, Python harness = post-MVP.
 - **Rationale**: matches `architecture/MVP_Overview.md` scope (workflow builder = future); everything post-MVP already has interfaces/models/stubs defined in specs, so no rework risk.
 - **Impact**: none of the post-MVP pieces block the MVP; contracts keep them attachable later.
 - **Revisit when**: a workflow user story is pulled into MVP (then D10 unwinds).
@@ -62,7 +65,7 @@ All other "recommended" decisions are reversible without architecture change —
 ---
 
 ### D3 — Backend topology: Gateway + Harness + Redis
-- **Decision**: Implement the **Gateway** (Fastify, sessions REST + SSE, Redis bridge) and **Agent Harness** (worker executing agents, emitting events to Redis) as separate processes. The older sessions-monolith backend (`spec/backend_api_contract.md`, `scaffolds/Backend_Scaffold.md`) is **superseded** (annotate those files "superseded — see Gateway_Scaffold").
+- **Decision**: Implement the **Gateway** (Fastify, sessions REST + SSE, Redis bridge) and **Agent Harness** (worker executing agents, emitting events to Redis) as separate processes. The older sessions-monolith backend (`spec/backend_api_contract.md`, `scaffolds/Backend_Scaffold.md`) is **superseded** (those files were bannered "superseded" on 2026-09-05).
 - **Rationale**: the product description explicitly adopts gateway+harness+Redis; the SSE scaffold says it replaces WS; polyglot Python/Node support requires harness decoupled from HTTP.
 - **Impact**: two Node processes + Redis; contracts package mediates their shared types.
 - **Revisit when**: never (architecture landing zone).
@@ -94,7 +97,7 @@ All other "recommended" decisions are reversible without architecture change —
 ---
 
 ### D7 — Canonical HTTP/SSE API (sessions-centric)
-- **Decision**: Gateway exposes: `POST /sessions/create` `{agentId, input?, config?}` → `{sessionId}`; `POST /sessions/:id/run` `{input?}` → `202 {sessionId, state}`; `POST /sessions/:id/stop` → `202`; `POST /sessions/:id/approve` `{choice: string}` → `202` (only if HITL kept); `GET /sessions/:id` → session view; `GET /sessions/:id/events` → SSE stream; `GET /agents/list` → `AgentDescriptor[]`; `GET /agents/:agentId/schema` → canonical agent schema; `GET /health`. No `/tasks` routes in MVP (tasks are internal).
+- **Decision**: Gateway exposes: `POST /sessions/create` `{agentId, input?, config?}` → `{sessionId}`; `POST /sessions/:id/run` `{input?}` → `202 {sessionId, state}`; `POST /sessions/:id/stop` → `202`; `POST /sessions/:id/approve` `{choice: string}` → `202`; `GET /sessions/:id` → session view; `GET /sessions/:id/events` → SSE stream; `GET /agents/list` → `AgentDescriptor[]`; `GET /agents/:agentId/schema` → canonical agent schema; `GET /health`. No `/tasks` routes in MVP (tasks are internal).
 - **Rationale**: fixes G3; sessions are the UI concept; task endpoints would leak internals.
 - **Impact**: frontend client + gateway implemented against this one contract; Gateway scaffold's `/tasks` routes dropped.
 - **Revisit when**: external programmatic task submission is needed (then add `POST /tasks` as an alternative entry).
@@ -125,7 +128,7 @@ All other "recommended" decisions are reversible without architecture change —
 
 ---
 
-### D11 — Human-in-the-loop: session-level approvals in MVP (recommended)
+### D11 — Human-in-the-loop: session-level approvals in MVP (confirmed)
 - **Decision**: Keep **session-level** HITL: an agent can request approval → session state `waiting`, `approval.requested` event, `AgentApprovalPanel` renders options, user picks → `POST /sessions/:id/approve` → `task.resume` → harness restores and continues. **No workflow-node approvals, no multi-approver, no timeout policies** in MVP.
 - **Rationale**: it is the product's differentiator, touches only one state + one endpoint + one component, and the event types already exist; also the spec's `waiting` state needs a consumer or it's dead weight.
 - **Impact**: calculator seed agent gets `approvalRequired` config to demo it; G9 resolved.
@@ -162,3 +165,11 @@ All other "recommended" decisions are reversible without architecture change —
 - **Rationale**: zero extra tooling risk; matches scaffold library choices; monorepo layout in `repo_layout.md` (fixes G6).
 - **Impact**: two-package contracts split (contracts vs agent-schemas); can merge later without consumer changes if desired.
 - **Revisit when**: build times hurt (add Turborepo), or a Python harness arrives (add uv/poetry workspace + its own CI job).
+
+---
+
+### D16 — Seed agents: echo + calculator
+- **Decision**: The MVP ships exactly two concrete agents, specced in `docs/spec/seed_agents.md`: **echo** (streams input back in chunks; default smoke-test agent, target of `scripts/smoke.mjs`) and **calculator** (parses `expression`, streams step logs, final numeric result; `approvalRequired` config drives the D11 HITL demo). Both implement the `AgentRuntime` contract, carry canonical D8 schemas, and register in the harness registry. No LLM-backed agent in MVP.
+- **Rationale**: resolves G7; covers every MVP capability with zero external dependencies (no API keys, deterministic tests); an LLM agent adds no new architectural surface (same `AgentRuntime` interface), so it's post-MVP without rework.
+- **Impact**: `packages/agent-schemas/schemas/echo.json` + `calculator.json` are the seed files; `spec/seed_agents.md` is the Phase 3 acceptance reference and the Phase 5.2 HITL e2e source.
+- **Revisit when**: an LLM-backed or third-party agent is pulled into MVP (same interface, additive).

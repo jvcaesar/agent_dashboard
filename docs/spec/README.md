@@ -17,7 +17,8 @@ The `/spec` folder is the **single source of truth** for how the system behaves 
 # 📦 Contents
 
 ## 1. `backend_api_contract.md`
-Defines all backend HTTP/WebSocket/SSE endpoints:
+> ⚠️ **Superseded (D2/D3/D7, bannered 2026-09-05)** — canonical API → `packages/contracts`.
+Describes the superseded monolith backend's HTTP/WebSocket endpoints:
 - `/sessions/create`
 - `/sessions/{id}/run`
 - `/sessions/{id}/stop`
@@ -82,7 +83,7 @@ Defines the frontend runtime architecture:
 - session‑bound components
 - tab model
 - folder structure
-- runtime glue between WebSocket/SSE and RxJS
+- runtime glue between SSE and RxJS (D2 — WebSocket superseded)
 
 Use this file when implementing the **React + RxJS frontend**.
 
@@ -124,7 +125,7 @@ Start with:
 - `session_state_machine.json`
 
 Then implement:
-- WebSocket/SSE client
+- SSE client (D2 — WebSocket superseded)
 - RxJS event bus
 - session‑bound components
 - tab model

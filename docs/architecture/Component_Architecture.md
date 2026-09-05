@@ -23,6 +23,10 @@ Components are **session-bound** and **reactive**:
 - `AgentControlPanel`
 - `AgentStateIndicator`
 - `AgentMetadataPanel`
+- `AgentApprovalPanel` (D11, confirmed in MVP): rendered while state = `waiting`;
+  shows prompt + options from `approval.requested`; an option click fires
+  `POST /sessions/:id/approve` → `task.resume` → session continues on
+  `approval.resumed`
 
 ## Example: Log Viewer
 

@@ -1,61 +1,95 @@
 
 {
+  "$canonical": "Canonical event model (scope_decisions.md D6): every event is { type, sessionId, taskId?, timestamp, payload }. Redis Pub/Sub messages and SSE data: frames are JSON encodings of this same model. Session states (D5): idle | running | streaming | waiting | completed | error. Approval events (D11): session-level HITL confirmed in MVP. task.* events remain internal (see Redis_Event_Schema.md).",
   "session.created": {
-    "sessionId": "string",
     "type": "session.created",
-    "state": "idle",
-    "timestamp": "number"
+    "sessionId": "string",
+    "timestamp": "number",
+    "payload": {
+      "state": "idle"
+    }
   },
   "session.started": {
-    "sessionId": "string",
     "type": "session.started",
-    "state": "running",
-    "input": {},
-    "config": {},
-    "timestamp": "number"
+    "sessionId": "string",
+    "timestamp": "number",
+    "payload": {
+      "state": "running",
+      "input": {},
+      "config": {}
+    }
   },
   "session.stateChanged": {
-    "sessionId": "string",
     "type": "session.stateChanged",
-    "from": "string",
-    "to": "string",
-    "timestamp": "number"
+    "sessionId": "string",
+    "timestamp": "number",
+    "payload": {
+      "from": "idle | running | streaming | waiting | completed | error",
+      "to": "idle | running | streaming | waiting | completed | error"
+    }
   },
   "output.partial": {
-    "sessionId": "string",
     "type": "output.partial",
-    "chunk": {},
-    "timestamp": "number"
+    "sessionId": "string",
+    "timestamp": "number",
+    "payload": {
+      "chunk": {}
+    }
   },
   "output.final": {
-    "sessionId": "string",
     "type": "output.final",
-    "output": {},
-    "timestamp": "number"
+    "sessionId": "string",
+    "timestamp": "number",
+    "payload": {
+      "output": {}
+    }
   },
   "log.append": {
-    "sessionId": "string",
     "type": "log.append",
-    "severity": "info | warn | error",
-    "message": "string",
-    "timestamp": "number"
+    "sessionId": "string",
+    "timestamp": "number",
+    "payload": {
+      "severity": "info | warn | error",
+      "message": "string"
+    }
   },
   "session.error": {
-    "sessionId": "string",
     "type": "session.error",
-    "error": {
-      "message": "string",
-      "stack": "string",
-      "code": "string"
-    },
-    "timestamp": "number"
+    "sessionId": "string",
+    "timestamp": "number",
+    "payload": {
+      "error": {
+        "message": "string",
+        "stack": "string",
+        "code": "string"
+      }
+    }
   },
   "session.completed": {
-    "sessionId": "string",
     "type": "session.completed",
-    "state": "completed",
-    "durationMs": "number",
-    "tokensUsed": "number",
-    "timestamp": "number"
+    "sessionId": "string",
+    "timestamp": "number",
+    "payload": {
+      "state": "completed",
+      "durationMs": "number",
+      "tokensUsed": "number"
+    }
+  },
+  "approval.requested": {
+    "type": "approval.requested",
+    "sessionId": "string",
+    "timestamp": "number",
+    "payload": {
+      "prompt": "string",
+      "options": ["string"]
+    }
+  },
+  "approval.resumed": {
+    "type": "approval.resumed",
+    "sessionId": "string",
+    "timestamp": "number",
+    "payload": {
+      "choice": "string"
+    }
   }
 }

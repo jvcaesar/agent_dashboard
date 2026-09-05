@@ -1,5 +1,7 @@
 # Backend Scaffold
 
+> ⚠️ **SUPERSEDED (2026-09-05, decision D3)** — This scaffold describes the earlier sessions-monolith backend (Express + WebSocket, in-process runtimes). The MVP implements the **Gateway (`apps/gateway`) + Agent Harness (`services/agent-harness`) + Redis (SSE)** architecture — see `docs/scaffolds/Gateway_Scaffold.md` and `docs/scaffolds/Agent_Harness_Scaffold.md`. Kept for historical reference; do not implement from this file.
+
 ## Overview
 
 This document provides a complete backend scaffold for the Agent Dashboard MVP. It includes folder structure, TypeScript starter files, interfaces, and TODO markers for implementation. This scaffold is designed to align with the /spec contracts and provide a clean foundation for backend development.

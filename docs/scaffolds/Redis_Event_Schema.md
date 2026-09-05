@@ -46,8 +46,8 @@ export type RedisEventType =
 
 export interface RedisEventBase {
   type: RedisEventType;
-  sessionId?: string;
-  taskId?: string;
+  sessionId: string; // D4: required on every event
+  taskId?: string;   // optional correlation (internal task rows)
   timestamp: number;
 }
 ```
@@ -106,7 +106,7 @@ All payloads are JSON objects.
 {
   "type": "task.created",
   "taskId": "string",
-  "sessionId": "string", // optional, if pre-bound
+  "sessionId": "string", // required (D4) — bound 1:1 at session creation
   "timestamp": 1710000000000
 }
 ```
@@ -183,8 +183,8 @@ All payloads are JSON objects.
   "sessionId": "string",
   "timestamp": 1710000000000,
   "payload": {
-    "from": "idle" | "running" | "waiting" | "completed" | "failed",
-    "to": "idle" | "running" | "waiting" | "completed" | "failed"
+    "from": "idle" | "running" | "streaming" | "waiting" | "completed" | "error",
+    "to": "idle" | "running" | "streaming" | "waiting" | "completed" | "error"
   }
 }
 ```

@@ -48,6 +48,9 @@ interface EventBus {
 
 ## Transport
 
-- WebSocket or SSE from backend
+- SSE from backend (`GET /sessions/:sessionId/events`) — WebSocket superseded (D2)
 - Each backend message mapped to `Event` and fed into `publish()`
+- Replay is tab-scoped: `ReplaySubject(100)` covers late subscribers within the
+  same page load; a full page reload starts fresh (D13; server-side backfill
+  is post-MVP)
 ```

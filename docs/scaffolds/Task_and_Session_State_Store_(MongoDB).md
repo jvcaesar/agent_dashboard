@@ -94,6 +94,8 @@ export const TaskModel = model("Task", TaskSchema);
 
 ## File: models/Session.ts
 
+> **Note (D9, 2026-09-05):** MongoDB persistence is **optional in the MVP** — the Gateway runs an in-memory session/task store by default (compose service commented out). These models define the later wiring; the store interface is shaped to match them.
+
 ```ts
 import { Schema, model } from "mongoose";
 
@@ -103,7 +105,7 @@ const SessionSchema = new Schema(
     agentId: { type: String, required: true },
     state: {
       type: String,
-      enum: ["idle", "running", "waiting", "completed", "failed"],
+      enum: ["idle", "running", "streaming", "waiting", "completed", "error"],
       default: "idle"
     },
     lastEventAt: { type: Date, default: Date.now },

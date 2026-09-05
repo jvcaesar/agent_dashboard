@@ -227,14 +227,14 @@ export async function handleTaskMessage(message: any) {
   switch (message.type) {
     case "task.created": {
       const task = await TaskModel.findById(message.taskId);
-      const sessionId = message.taskId; // or a separate session mapping
+      const sessionId = message.sessionId; // D4: sessionId is required on every task message
       await runMockAgent(task.id, sessionId, task.input);
       break;
     }
 
     case "task.resume": {
       const task = await TaskModel.findById(message.taskId);
-      const sessionId = message.taskId;
+      const sessionId = message.sessionId; // D4: sessionId is required on every task message
       const choice = task.humanInteraction?.selectedChoice || "Standard";
       await resumeMockAgent(task.id, sessionId, choice);
       break;
